@@ -35,8 +35,20 @@ class Block:
         
         return hashlib.sha256(block_string).hexdigest()
         
-
+        
 class Blockchain:
+    def __init__(self):
+        self.chain = []
+        
+    def get_latest_block(self):
+        return self.chain[-1]
     
+    def add_block(self, transactions):
+        new_block = Block(
+            index=len(self.chain),
+            transactions=transactions,
+            previous_hash=self.get_latest_block().hash
+        )
+        self.chain.append(new_block)
     
     
