@@ -22,6 +22,7 @@ class Block:
         self.timestamp = time.time()
         self.transactions = transactions
         self.previous_hash = previous_hash
+        self.nonce = 0
         self.hash = self.calculate_hash()
         
     def calculate_hash(self):
@@ -31,13 +32,26 @@ class Block:
             "timestamp" : self.timestamp,
             "transactions" : [t.to_dict() for t in self.transactions],
             "previous_hash" : self.previous_hash,
+            "nonce": self.nonce
         }, sort_keys=True).encode()
         
         return hashlib.sha256(block_string).hexdigest()
+    
+    def mine_block(self, difficulty):
+        target = "0" * difficulty
+        
+        while self.hash[:difficulty] != target:
+            self.nonce +=1
+            self.hash = self.calculate_hash()
+            
+        print("Yeees, Hi everyone horaaaa, you can check")
+        print("Block mined:", self.hash)
+        
         
         
 class Blockchain:
     def __init__(self):
+        self.difficulty = 4
         self.chain = [self.create_genesis_block()]
 
     def create_genesis_block(self):
@@ -47,12 +61,14 @@ class Blockchain:
         return self.chain[-1]
 
     def add_block(self, transactions):
-        new_block = Block(
-            index=len(self.chain),
-            transactions=transactions,
-            previous_hash=self.get_latest_block().hash
+        block = Block(
+            len(self.chain),
+            transactions,
+            self.get_latest_block().hash
         )
-        self.chain.append(new_block)
+        
+        block.mine_block(self.difficulty)
+        self.chain.append(block)
     
 
 bc = Blockchain()
@@ -69,4 +85,5 @@ for block in bc.chain:
     print("Hash:", block.hash)
     print("previous_hash:", block.previous_hash)
     print("Transactions:", [t.to_dict() for t in block.transactions])
+    print("Nonce:", block.nonce)
     print()
