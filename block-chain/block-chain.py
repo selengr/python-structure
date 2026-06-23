@@ -125,3 +125,18 @@ def receive_block():
     
     return {"message": "block received"}
 
+
+@app.route('/chain', methods=['GET'])
+def get_chain():
+    chain_data = []
+    for block in bc.chain:
+        chain_data.append({
+            "index": block.index,
+            "hash": block.hash,
+            "previous_hash": block.previous_hash,
+            "nonce": block.nonce,
+            "transactions": [t.to_dict() for t in block.transactions]
+        })
+        
+    return jsonify(block)
+
