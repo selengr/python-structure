@@ -102,3 +102,26 @@ def add_peer():
     peer = data.get("peer")
     peers.add(peer)
     return {"message": "peer added", "peers": list(peers)}
+
+@app.route('/receive_block', methods=['POST'])
+def receive_block():
+    data = request.get_json()
+    
+    transactions = [
+        Transaction(t["sender"], t["receiver"], t["amount"])
+        for t in data["transactions"]
+    ]
+    
+    block = Block(
+        data["index"],
+        transactions,
+        data["previous_hash"]
+    )
+    
+    block.nonce = data["nonce"]
+    block.hash = data["hash"]
+    
+    bc.chain.append(block)
+    
+    return {"message": "block received"}
+
