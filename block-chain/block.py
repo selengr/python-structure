@@ -1,6 +1,10 @@
 import hashlib
 import json
 import time
+from flask import Flask, request, jsonify
+import requests
+
+app = Flask(__name__)
 
 
 class Transaction:

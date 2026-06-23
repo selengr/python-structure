@@ -1,45 +1,18 @@
-# class Person():
-#     def __init__(self, name, age):
-#         self.name = name
-#         self.age = age
+entered_number = int(input("Enter a number please: "))
 
-#     def say_hello(self):
-#         print("Hello, my name is", self.name)
+num = 2
 
+while num <= entered_number:
+    i = 2
+    is_aval = True
 
-# p1 = Person("Ali", 25)
+    while i < num:
+        if num % i == 0:
+            is_aval = False
+            break
+        i += 1
 
-# p1.say_hello()
+    if is_aval:
+        print(num)
 
-# print(p1.age)
-
-# class Book:
-#     def __init__(self, page):
-#         self.pages = page
-
-
-# book = Book(250)
-
-# print(book.pages)
-
-
-
-
-
-
-
-# A small library of letters
-letters = {
-    'A': ["  *  ", " * * ", "*****", "*   *", "*   *"],
-    'B': ["****", "*   *", "****", "*   *", "****"]
-}
-
-name = input("Enter your name: ")
-first_char = name[0].upper()
-
-# Check if we have the letter in our "library"
-if first_char in letters:
-    for row in letters[first_char]:
-        print(row)
-else:
-    print("Sorry, I don't have a drawing for that letter yet.")
+    num += 1
