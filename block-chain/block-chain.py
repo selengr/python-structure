@@ -148,6 +148,20 @@ def get_chain():
         })
     return jsonify(chain_data)
 
+@app.route('/sync', methods=['GET'])
+def sync_chain():
+    for peer in peers:
+        try:
+            response = requests.get(f"http://{peer}/chain")
+            if response.status_code == 200:
+                new_chain_data = response.json()
+                return {"message": "Chain synced from peer", "peer": peer}
+            
+        except:
+            continue
+   
+        return {"message": "No peer available to sync"}
+
 
 @app.route('/mine', methods=['GET'])
 def mine():
