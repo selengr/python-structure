@@ -5,9 +5,7 @@ from flask import Flask, request, jsonify
 import requests
 
 app = Flask(__name__)
-print("---------app", app)
 peers = set()
-print("---------peers", peers)
 
 class Transaction:
     def __init__(self, sender, receiver, amount):
@@ -96,33 +94,44 @@ class Blockchain:
 bc = Blockchain()
 
 
+
 @app.route('/add_peer', methods=['POST'])
 def add_peer():
     data = request.get_json()
     peer = data.get("peer")
+    
+    if not peer:
+        return "Invalid data", 400
+    
     peers.add(peer)
-    return {"message": "peer added", "peers": list(peers)}
+    my_address = f"localhost:{request.host.split(':')[1]}" 
+    
+    return {
+        "message": "Peer added and synced",
+        "total_peers": list(peers)
+    }
+
 
 @app.route('/receive_block', methods=['POST'])
 def receive_block():
     data = request.get_json()
-    
+
     transactions = [
         Transaction(t["sender"], t["receiver"], t["amount"])
         for t in data["transactions"]
     ]
-    
+
     block = Block(
         data["index"],
         transactions,
         data["previous_hash"]
     )
-    
+
     block.nonce = data["nonce"]
     block.hash = data["hash"]
-    
+
     bc.chain.append(block)
-    
+
     return {"message": "block received"}
 
 
@@ -137,6 +146,15 @@ def get_chain():
             "nonce": block.nonce,
             "transactions": [t.to_dict() for t in block.transactions]
         })
-        
-    return jsonify(block)
+    return jsonify(chain_data)
 
+
+@app.route('/mine', methods=['GET'])
+def mine():
+    tx = Transaction("network", "miner", 1)
+    bc.add_block([tx])
+    return {"message": "block mined"}
+
+
+if __name__ == "__main__":
+    app.run(port=5000)
